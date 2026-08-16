@@ -12,24 +12,29 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to bind to port 6379")
 	}
-	conn, err := l.Accept()
-	if err != nil {
-		log.Fatal("Error accepting connection: ", err.Error())
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			log.Fatal("Error accepting connection: ", err.Error())
+		}
+		go handleConn(conn)
 	}
-	go handleConn(conn)
 }
 
 func handleConn(conn net.Conn) {
 	defer conn.Close()
-
 	buf := make([]byte, 1024)
 	for {
 		_, err := conn.Read(buf)
+		log.Println("Read data from request: ", string(buf))
 		if err != nil {
 			log.Println("Error reading the conn: ", err)
 			break
 		}
 		response := []byte("+PONG\r\n")
-		conn.Write(response)
+		_, err = conn.Write(response)
+		if err != nil {
+			log.Println("Failed to write the response: ", err)
+		}
 	}
 }
