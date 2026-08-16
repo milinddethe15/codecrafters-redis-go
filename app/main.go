@@ -22,12 +22,13 @@ func main() {
 func handleConn(conn net.Conn) {
 	defer conn.Close()
 
-	var buf []byte
-	_, err := conn.Read(buf)
-	if err != nil {
-		log.Println("Error reading the conn: ", err)
+	buf := make([]byte, 1024)
+	for {
+		_, err := conn.Read(buf)
+		if err != nil {
+			log.Println("Error reading the conn: ", err)
+		}
+		response := []byte("+PONG\r\n")
+		conn.Write(response)
 	}
-	response := []byte("+PONG\r\n")
-	conn.Write(response)
-	handleConn(conn)
 }
