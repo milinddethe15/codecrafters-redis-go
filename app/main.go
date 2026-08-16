@@ -27,6 +27,7 @@ func handleConn(conn net.Conn) {
 		_, err := conn.Read(buf)
 		if err != nil {
 			log.Println("Error reading the conn: ", err)
+			break
 		}
 		response := []byte("+PONG\r\n")
 		conn.Write(response)
