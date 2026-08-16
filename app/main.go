@@ -20,6 +20,8 @@ func main() {
 }
 
 func handleConn(conn net.Conn) {
+	defer conn.Close()
+
 	var buf []byte
 	_, err := conn.Read(buf)
 	if err != nil {
@@ -27,5 +29,5 @@ func handleConn(conn net.Conn) {
 	}
 	response := []byte("+PONG\r\n")
 	conn.Write(response)
-	conn.Close()
+	handleConn(conn)
 }
