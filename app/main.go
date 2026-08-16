@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	log.Println("Logs from your program will appear here!")
+	log.Println("Logs from redis server will appear here!")
 
 	l, err := net.Listen("tcp", "0.0.0.0:6379")
 	if err != nil {
@@ -16,10 +16,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Error accepting connection: ", err.Error())
 	}
+	go handleConn(conn)
+}
+
+func handleConn(conn net.Conn) {
 	var buf []byte
-	_, err = conn.Read(buf)
+	_, err := conn.Read(buf)
 	if err != nil {
-		log.Fatal("Error reading the conn:", err)
+		log.Println("Error reading the conn: ", err)
 	}
 	response := []byte("+PONG\r\n")
 	conn.Write(response)
